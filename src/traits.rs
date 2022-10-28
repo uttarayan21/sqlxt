@@ -34,10 +34,12 @@ pub trait MapValues<Db: sqlx::Database> {
     type Output: AsRef<str>;
     type Error: std::error::Error + From<sqlx::Error>;
     fn query(&self) -> Result<Self::Output, Self::Error>;
-    fn map_values<'q, Q: BindingTo<'q, Db>>(&self, query: Q) -> Result<(), Self::Error>;
+    fn map_values<'q, Q: BindingTo<'q, Db>>(&self, query: Q) -> Result<Q, Self::Error>;
 }
 
 pub trait QueryGen<'q, Db: sqlx::Database, Q: BindingTo<'q, Db>> {
     type Error: std::error::Error + From<sqlx::Error>;
-    fn generate(&self) -> Result<Q, Self::Error>;
+    fn generate(&self, query: &'q impl AsRef<str>) -> Result<Q, Self::Error>;
 }
+
+
